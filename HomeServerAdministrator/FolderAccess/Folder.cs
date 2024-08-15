@@ -76,7 +76,7 @@ namespace HomeServerAdministrator
             ListExists = true;
 
             // Instantiate dummy folders
-            string[] dummyNames = { "Brady's Folder", "Chris's Folder", "Dave's Folder", "Shitrack's Folder", "Dicksmack's Folder", "CRACK's Folder"};
+            string[] dummyNames = { "Brady", "Chris", "Dave", "Shitrack", "Dicksmack", "CRACK"};
             double[] dummySizes = { 2.3, 5.3, 1.9, 2.1, 3.2, 93.3 };
             for (int i = 0; i < dummyNames.Length; i++)
             {

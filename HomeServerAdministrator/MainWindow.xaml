@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeServerAdministrator"
         mc:Ignorable="d"
-        Title="Server Admin" Height="450" Width="800">
+        Title="Server Admin" Height="450" Width="800"
+        ResizeMode="NoResize">
 
     <Window.Resources>
         <Style TargetType="Button" x:Key="NavButtonStyle">
@@ -27,9 +28,9 @@
             <Setter Property="Margin" Value="15,5,0,0"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
-        <Style TargetType="Canvas" x:Key="FileHoverIndicator">
-            <Setter Property="Grid.Column" Value="0"/>
-            <Setter Property="Grid.ColumnSpan" Value="5"/>
+
+        <Style TargetType="Grid" x:Key="FileHoverIndicator">
+            <Setter Property="Height" Value="30"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#AA888888"/>
@@ -39,13 +40,20 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style TargetType="TextBlock" x:Key="FileText">
+            <Setter Property="Margin" Value="10,6,0,0"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+
         <Style TargetType="Button" x:Key="DeleteFileButton">
             <Setter Property="Content" Value="X"/>
             <Setter Property="Grid.Column" Value="4"/>
             <Setter Property="Width" Value="20"/>
             <Setter Property="Height" Value="20"/>
             <Setter Property="Margin" Value="200,0,0,0"/>
-            <Setter Property="Visibility" Value="Hidden"/>
+            <Setter Property="Visibility" Value="Visible"/>
         </Style>
     </Window.Resources>
 
@@ -79,7 +87,7 @@
 
         <!-- Folders Page -->
         <StackPanel Grid.Row="1" x:Name="FoldersPage" Background="#2B2B2B" Visibility="Visible"  Margin="15,0,15,15" ClipToBounds="True">
-            <Grid x:Name="FoldersArea">
+            <Grid x:Name="FoldersColumn">
                 <!-- Grid definitions -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -108,7 +116,8 @@
                 </StackPanel>
                 <Rectangle Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1" Fill="AntiqueWhite"/>
             </Grid>
-            <Button Content="Add Folder" Height="30" Style="{StaticResource NavButtonStyle}"/>
+            <StackPanel Orientation="Vertical"  x:Name="FoldersArea"/>
+
 
         </StackPanel>
 
