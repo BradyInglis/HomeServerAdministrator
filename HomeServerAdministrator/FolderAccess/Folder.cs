@@ -20,7 +20,7 @@ namespace HomeServerAdministrator
         private double _sizeInGB;
 
         // Constructors
-        public Folder(string name, string dateCreated, double sizeInGB)
+        private Folder(string name, string dateCreated, double sizeInGB)
         {
             Name = name;
             DateCreated = dateCreated;
