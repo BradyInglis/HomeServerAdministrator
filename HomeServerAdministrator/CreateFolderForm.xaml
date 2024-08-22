@@ -5,44 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeServerAdministrator"
         mc:Ignorable="d"
-        Title="New Folder Manual Creation" Height="450" Width="350"
+        Title="New Folder" Height="470" Width="350"
         Background="#FF8C00"
         ResizeMode="NoResize">
 
-    <Window.Resources>
-        <Style TargetType="TextBlock" x:Key="HeaderStyle">
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,0,20"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontFamily" Value="Calibri"/>
-            <Setter Property="Foreground" Value="WhiteSmoke"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="SubHeaderStyle">
-            <Setter Property="Margin" Value="20,0,0,0"/>
-            <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontFamily" Value="Calibri"/>
-            <Setter Property="Foreground" Value="WhiteSmoke"/>
-        </Style>
-
-        <Style TargetType="TextBox" x:Key="TextBoxStyle">
-            <Setter Property="Height" Value="35"/>
-            <Setter Property="Margin" Value="20,5,20,20"/>
-            <Setter Property="Padding" Value="0,8,0,0"/>
-      
-        </Style>
-
-        <Style TargetType="Button" x:Key="SubmitButtonStyle">
-            <Setter Property="Background" Value="#CCCCCC"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="FontWeight" Value="Normal"/>
-        </Style>
-
-    </Window.Resources>
-    
-    
-    
     <Grid Margin="3,3,3,3" Background="#2B2B2B">
 
         <Grid.ColumnDefinitions>
@@ -51,9 +17,9 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="95"/>
-            <RowDefinition Height="95"/>
-            <RowDefinition Height="95"/>
+            <RowDefinition Height="105"/>
+            <RowDefinition Height="105"/>
+            <RowDefinition Height="105"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
@@ -62,22 +28,25 @@
         </StackPanel>
 
         <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="0,0,0,20">
-            <TextBlock Text="User's Name:" Style="{StaticResource SubHeaderStyle}"/>
+            <TextBlock Text="User's Name:" Style="{StaticResource SubHeaderStyle}" x:Name="NameHeader"/>
+            <TextBlock Text="Some error will be displayed here" Style="{StaticResource ErrorTextStyle}" x:Name="NameError"/>
             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="Name"/>
         </StackPanel>
 
         <StackPanel VerticalAlignment="Center" Grid.Row="2" Margin="0,0,0,20">
-            <TextBlock Text="User's Email Address:" Style="{StaticResource SubHeaderStyle}"/>
+            <TextBlock Text="User's Email Address:" Style="{StaticResource SubHeaderStyle}" x:Name="EmailHeader"/>
+            <TextBlock Text="Some error will be displayed here" Style="{StaticResource ErrorTextStyle}" x:Name="EmailError"/>
             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="Email"/>
         </StackPanel>
 
         <StackPanel VerticalAlignment="Center" Grid.Row="3" Margin="0,0,0,20">
-            <TextBlock Text="User's Password Request:" Style="{StaticResource SubHeaderStyle}"/>
+            <TextBlock Text="User's Password Request:" Style="{StaticResource SubHeaderStyle}" x:Name="PasswordHeader"/>
+            <TextBlock Text="Some error will be displayed here" Style="{StaticResource ErrorTextStyle}" x:Name="PasswordError"/>
             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="Password"/>
         </StackPanel>
 
         <StackPanel VerticalAlignment="Center" Grid.Row="4" Margin="0,0,0,20">
-            <Button Content="Submit" Height="50" Width="150" Style="{StaticResource SubmitButtonStyle}" Click="OnSubmitClick"/>
+            <Button Content="Submit" Height="50" Width="150" Style="{StaticResource SubmitButtonStyle}" x:Name="SubmitFolderButton" Click="OnSubmitClick"/>
         </StackPanel>
 
 

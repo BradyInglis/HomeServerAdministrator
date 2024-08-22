@@ -20,7 +20,6 @@ namespace HomeServerAdministrator
 
         // Private fields
         private PageState _currentPage;
-        private List<StackPanel> visibleFolders = new List<StackPanel>();
 
 
         // Properties
@@ -54,6 +53,7 @@ namespace HomeServerAdministrator
                 FoldersBtn.IsEnabled = true;
                 Grid.SetColumn(Navbar, 1);
             }
+       
         }
 
 
@@ -61,7 +61,7 @@ namespace HomeServerAdministrator
         private void InstantiateFolders()
         {
             // Grab folders from server, instantiate into memory
-            Folder.CreateFolders();
+            Folder.CreateFolders(this);
 
             // Display folders on Folders page
             DisplayFolders();
@@ -74,18 +74,16 @@ namespace HomeServerAdministrator
             // Iterate through each folder, createing a visual container for each
             foreach (Folder folder in Folder.Folders)
             {
-                createFolderContainer(folder);
+                CreateFolderContainer(folder);
             }
 
-            // Create add folder button, add to folders area below folders
-            Button addFolderButton = new Button { Content = "Add New Folder", Style = (Style)FindResource("NavButtonStyle") };
-            addFolderButton.Click += OnAddFolderButtonClick;
-            FoldersArea.Children.Add(addFolderButton);
+            // Create add folder button displayed at bottom of folders area
+            CreateAddFolderButton();
         }
 
 
         // For creating visual representation of folder
-        private void createFolderContainer(Folder folder)
+        private void CreateFolderContainer(Folder folder)
         {
             // Create a grid to contain all folder metadata 
             Grid currentFolderContainer = new Grid()
@@ -98,12 +96,11 @@ namespace HomeServerAdministrator
             currentFolderContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             currentFolderContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             currentFolderContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            currentFolderContainer.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-
+            
             // Create text blocks corresponding to Folder metadata 
             TextBlock folderName = new TextBlock { Text = folder.Name, Style = (Style)FindResource("FileText") };
             TextBlock folderDateCreated = new TextBlock { Text = folder.DateCreated, Style = (Style)FindResource("FileText") };
-            TextBlock folderSizeInGB = new TextBlock { Text = $"{folder.SizeInGB}", Style = (Style)FindResource("FileText") };
+            TextBlock folderSizeInGB = new TextBlock { Text = $"{folder.Size}", Style = (Style)FindResource("FileText") };
 
             // Create delete button for this folder 
             Button deleteButton = new Button { Style = (Style)FindResource("DeleteFileButton") };
@@ -116,8 +113,8 @@ namespace HomeServerAdministrator
             // Set grid columns for delete button 
             Grid.SetColumn(deleteButton, 2);
 
-            // Add event listeners to necessary elements
-            AddFolderEventListeners(currentFolderContainer, deleteButton);
+            // Subscribe methods to event handlers of necessary elements
+            AddFolderEventHandlers(currentFolderContainer, deleteButton);
 
             // Add all elemetns to container element
             currentFolderContainer.Children.Add(folderName);
@@ -130,8 +127,17 @@ namespace HomeServerAdministrator
         }
 
 
-        // Event listeners for folder container
-        private void AddFolderEventListeners(Grid currentFolderContainer, Button deleteButton)
+        // For appending add folder button to bottom of folders area
+        private void CreateAddFolderButton()
+        {
+            Button addFolderButton = new Button { Content = "Add New Folder", Style = (Style)FindResource("NavButtonStyle") };
+            addFolderButton.Click += OnAddFolderButtonClick;
+            FoldersArea.Children.Add(addFolderButton);
+        }
+
+
+        // Event handlers for folder container
+        private void AddFolderEventHandlers(Grid currentFolderContainer, Button deleteButton)
         {
             // Delete button should only be visible when mouse is hovering over this folder
             currentFolderContainer.MouseEnter += (sender, e) =>
@@ -143,26 +149,36 @@ namespace HomeServerAdministrator
                 deleteButton.Visibility = Visibility.Hidden;
             };
             
-            // Delete button click calls Folder.DeleteFolderByName(), removing this folder from the server
+            // Delete button click creates instance of delete folder window and subscribes to event handler
             deleteButton.Click += (sender, e) =>
             {
-                Folder.DeleteFolderByName(currentFolderContainer.Name);
-                FoldersArea.Children.Remove(currentFolderContainer);
+                DeleteFolderVerificationWindow deleteFolderWindow = new DeleteFolderVerificationWindow();
+                deleteFolderWindow.DeleteButton.Click += (sender, e) =>
+                {
+                    if (deleteFolderWindow.IsSubmissionSuccessful)
+                    {
+                        deleteFolderWindow.Close();
+                        Folder.DeleteFolderByName(currentFolderContainer.Name);
+                        FoldersArea.Children.Remove(currentFolderContainer);
+                    }
+                };
+                deleteFolderWindow.ShowDialog();
             };
         }
 
 
         // When add folder button is pressed, a child window is opened with a form containing the new Folders properties to be filled
-        private void OnAddFolderButtonClick(object sender, RoutedEventArgs e)
+        private void OnAddFolderButtonClick(object sender, RoutedEventArgs args)
         {
-            // Create a new CreateFolderForm window
+            // Create a new CreateFolderForm window, subscribe to submit button press
             CreateFolderForm newFolderForm = new CreateFolderForm();
+            newFolderForm.SubmitFolderButton.Click += RefreshFolders;
             newFolderForm.ShowDialog();
         }
 
 
         // When a Folders button is pressed, animate the navbar and shift the content to Folders content
-        private void OnFoldersClick(object sender, RoutedEventArgs e)
+        private void OnFoldersClick(object sender, RoutedEventArgs args)
         {
             // Change the page
             CurrentPage = PageState.Folders;
@@ -170,11 +186,25 @@ namespace HomeServerAdministrator
 
 
         // When a Requests button is pressed, animate the navbar and shift the content to Requests content
-        private void OnRequestsClick(object sender, RoutedEventArgs e)
+        private void OnRequestsClick(object sender, RoutedEventArgs args)
         {
             // Change the page
             CurrentPage = PageState.Requests;
         }
 
+
+        // Clears folders area list completely and refills it
+        public void RefreshFolders()
+        {
+            // Remove all folders from folder area
+            FoldersArea.Children.Clear();
+
+            // Add new list of folders
+            DisplayFolders();
+        }
+        private void RefreshFolders(object sender, RoutedEventArgs args)
+        {
+            RefreshFolders();
+        }
     }
 }

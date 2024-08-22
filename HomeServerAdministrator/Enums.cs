@@ -8,6 +8,6 @@ namespace HomeServerAdministrator.Enums
         public enum PageState
         {
             Folders,
-            Requests
+            Requests,
         }
 }

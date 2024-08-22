@@ -2,6 +2,10 @@
  *  This class defines a Folder object. It represents the metadata that corresponds to a folder on the server.
  */
 
+using System;
+using System.Windows;
+using System.Windows.Controls;
+
 namespace HomeServerAdministrator
 {
     public class Folder
@@ -11,21 +15,18 @@ namespace HomeServerAdministrator
         private static List<Folder> _folders = new List<Folder>();
         private static bool _listExists = false;
         private const string DefaultName = "Name could not be found.";
-        private const string DefaultDate = "Date could not be found.";
-        private const double DefaultSize = 0.0;
+        private const string DefaultDate = "Date could not be found";
+        private const float DefaultSize = 0.0f;
 
-        // Private fields
-        private string _name;
-        private string _dateCreated;
-        private double _sizeInGB;
 
-        // Constructors
-        private Folder(string name, string dateCreated, double sizeInGB)
+        // Constructor
+        public Folder(string name, string dateCreated, float size)
         {
             Name = name;
             DateCreated = dateCreated;
-            SizeInGB = sizeInGB;
+            Size = size;
         }
+
         // Properties
         public static List<Folder> Folders
         {
@@ -37,34 +38,24 @@ namespace HomeServerAdministrator
             get { return _listExists; }
             private set { _listExists = value; }
         }
-
         public string Name
         {
-            get { return _name; }
-            set
-            {
-                _name = string.IsNullOrEmpty(value) ? DefaultName : value;
-            }
+            get;
+            set;
         }
         public string DateCreated
         {
-            get { return _dateCreated; }
-            set
-            {
-                _dateCreated = string.IsNullOrEmpty(value) ? DefaultDate : value;
-            }
+            get;
+            set;
         }
-        public double SizeInGB
+        public float Size
         {
-            get { return _sizeInGB; }
-            set
-            {
-                _sizeInGB = value < 0 ? DefaultSize : value;
-            }
+            get;
+            set;
         }
 
         // Static methods - CreateFolder method currently loads example Folders
-        public static void CreateFolders()
+        public static async void CreateFolders(MainWindow window)
         {
             // Return instantly if folders have already been instantiated
             if (ListExists)
@@ -72,16 +63,12 @@ namespace HomeServerAdministrator
                 return;
             }
 
-            // Otherwise, list exists now
-            ListExists = true;
+            // Pull folders from server, store in folders list
+            Folders = await Server.GetFolders();
 
-            // Instantiate dummy folders
-            string[] dummyNames = { "Brady", "Chris", "Dave", "Shitrack", "Dicksmack", "CRACK"};
-            double[] dummySizes = { 2.3, 5.3, 1.9, 2.1, 3.2, 93.3 };
-            for (int i = 0; i < dummyNames.Length; i++)
-            {
-                Folders.Add(new Folder($"{dummyNames[i]}", "2024-08-14", dummySizes[i]));
-            }
+            // When list is complete, UI will update
+            ListExists = true;
+            window.RefreshFolders();
         }
 
         // Search through static list of Folder and return the matching Folder if it exists, else null
@@ -106,11 +93,23 @@ namespace HomeServerAdministrator
             // Search for a matching folder
             Folder folderToDelete = FindFolderByName(name);
 
-            // If the folder exists, delete it
+            // If the folder exists, delete it from memory and server
             if (folderToDelete != null)
             {
                 Folders.Remove(folderToDelete);
+                Server.DeleteFolder(folderToDelete);
             }
+        }
+        
+        // Send folder to server and keep it in memory. Password/email need not be saved to memory. (Only newly made folders will ever need to be saved to server)
+        public static void CreateNewFolder(string name, string email, string password)
+        {
+            // Store in memory
+            string currentDate = DateTime.Now.Date.ToString().Split(" ")[0];
+            Folders.Add(new Folder(name, currentDate, DefaultSize));
+
+            // Send to server for permanent storage
+            Server.SaveFolder(name, email, password);
         }
     }
 }

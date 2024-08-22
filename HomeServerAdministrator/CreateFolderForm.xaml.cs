@@ -26,37 +26,49 @@ namespace HomeServerAdministrator
         // Create a new folder on submit click (after data validation)
         private void OnSubmitClick(object sender, RoutedEventArgs e)
         {
-            // Ensure entry data is valid
-            validateEntries();
-
-            // Create a new folder
-            Folder.CreateNewFolder(Name.Text, Email.Text, Password.Text);
+            // Create a new folder if entries valid then close window
+            if (ValidateEntries()) 
+            { 
+                Folder.CreateNewFolder(Name.Text, Email.Text, Password.Text);
+                this.Close();
+            }
         }
 
         // Entries validated here
-        private void validateEntries()
+        private bool ValidateEntries()
         {
+            bool entriesValid = true;
             try
             {
-                EntryValidation.ValidateName(Name);
-                EntryValidation.ValidateEmail(Email);
-                EntryValidation.ValidateEmail(Password);
+                EntryValidation.ValidateName(Name.Text);
             }
-            catch (Exception ex)
+            catch (FolderNameException ex)
             {
-                if (ex is FolderNameException)
-                {
-                    Name.Text = $"{Name.Text} - {ex.Message}";
-                }
-                else if (ex is FolderEmailException)
-                {
-                    Email.Text = $"{Email.Text} - {ex.Message}";
-                }
-                else
-                {
-                    Password.Text = $"{Password.Text} - {ex.Message}";
-                }
+                NameError.Text = ex.Message;
+                NameError.Visibility = Visibility.Visible;
+                entriesValid = false;
             }
+            try
+            {
+                EntryValidation.ValidateEmail(Email.Text);                    
+            }
+            catch (FolderEmailException ex)
+            {
+                EmailError.Text = ex.Message;
+                EmailError.Visibility = Visibility.Visible;
+                entriesValid = false;
+            }
+            try
+            {
+                EntryValidation.ValidatePassword(Password.Text);
+            }
+            catch (FolderPasswordException ex)
+            {
+                PasswordError.Text = ex.Message;
+                PasswordError.Visibility = Visibility.Visible;
+                entriesValid = false;
+            }
+            return entriesValid;
         }
     }
 }

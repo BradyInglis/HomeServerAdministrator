@@ -81,12 +81,14 @@
             </Grid.RowDefinitions>
             <Button Grid.Column="0" Grid.Row="0" x:Name="FoldersBtn" Content="Folders" Click="OnFoldersClick" IsEnabled="False" Style="{StaticResource NavButtonStyle}"/>
             <Button Grid.Column="1" Grid.Row="0" x:Name="RequestsBtn" Content="Requests" Click="OnRequestsClick" IsEnabled="True" Style="{StaticResource NavButtonStyle}"/>
+            <Rectangle Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Fill="black"/>
             <Rectangle Grid.Column="0" Grid.Row="1" x:Name="Navbar"  Fill="#FF8C00"/>
         </Grid>
         
 
         <!-- Folders Page -->
-        <StackPanel Grid.Row="1" x:Name="FoldersPage" Background="#2B2B2B" Visibility="Visible"  Margin="15,0,15,15" ClipToBounds="True">
+        <ScrollViewer Grid.Row="1" Background="#2B2B2B" VerticalScrollBarVisibility="Auto" Margin="15,0,15,15" ClipToBounds="True">
+        <StackPanel x:Name="FoldersPage">
             <Grid x:Name="FoldersColumn">
                 <!-- Grid definitions -->
                 <Grid.ColumnDefinitions>
@@ -116,10 +118,9 @@
                 </StackPanel>
                 <Rectangle Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1" Fill="AntiqueWhite"/>
             </Grid>
-            <StackPanel Orientation="Vertical"  x:Name="FoldersArea"/>
-
-
+            <StackPanel Orientation="Vertical" x:Name="FoldersArea"/>
         </StackPanel>
+        </ScrollViewer>
 
         <!-- Requests Page -->
         <StackPanel Grid.Row="1" x:Name="RequestsPage" Background="Transparent" Visibility="Hidden">
