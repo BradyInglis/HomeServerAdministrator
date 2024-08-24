@@ -8,9 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows;
+using System.Net.Http;
 
 namespace HomeServerAdministrator
 {
@@ -24,14 +23,20 @@ namespace HomeServerAdministrator
         }
 
         // Create a new folder on submit click (after data validation)
-        private void OnSubmitClick(object sender, RoutedEventArgs e)
+        public async Task<bool> OnSubmitClick(object sender, RoutedEventArgs e)
         {
-            // Create a new folder if entries valid then close window
-            if (ValidateEntries()) 
-            { 
-                Folder.CreateNewFolder(Name.Text, Email.Text, Password.Text);
-                this.Close();
-            }
+            // Show error and return if entries invalid 
+            if (!ValidateEntries()) { return false; }
+
+            // Attempt to send data with admin pass
+            HttpResponseMessage response = await Folder.CreateNewFolder(Name.Text, Email.Text, Password.Text, AdminPassword.Text);
+
+            // Show errormessage if admin pass incorrect or server already exists
+            if (!response.IsSuccessStatusCode) { AdminPasswordError.Visibility = Visibility.Visible; return false; }
+
+            // Otherwise tell user folder was saved and return true
+            MessageBox.Show("Folder successfully added to server");
+            return true;
         }
 
         // Entries validated here

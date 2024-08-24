@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeServerAdministrator"
         mc:Ignorable="d"
-        Title="New Folder" Height="470" Width="350"
+        Title="New Folder" Height="500" Width="350"
         Background="#FF8C00"
         ResizeMode="NoResize">
 
@@ -17,36 +17,43 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="105"/>
-            <RowDefinition Height="105"/>
-            <RowDefinition Height="105"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel VerticalAlignment="Center" Grid.Row="0">
             <TextBlock Text="Please Enter The Following Information:" Style="{StaticResource HeaderStyle}"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="0,0,0,20">
+        <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="0,0,0,0">
             <TextBlock Text="User's Name:" Style="{StaticResource SubHeaderStyle}" x:Name="NameHeader"/>
             <TextBlock Text="Some error will be displayed here" Style="{StaticResource ErrorTextStyle}" x:Name="NameError"/>
             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="Name"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Center" Grid.Row="2" Margin="0,0,0,20">
+        <StackPanel VerticalAlignment="Center" Grid.Row="2" Margin="0,0,0,0">
             <TextBlock Text="User's Email Address:" Style="{StaticResource SubHeaderStyle}" x:Name="EmailHeader"/>
             <TextBlock Text="Some error will be displayed here" Style="{StaticResource ErrorTextStyle}" x:Name="EmailError"/>
             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="Email"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Center" Grid.Row="3" Margin="0,0,0,20">
+        <StackPanel VerticalAlignment="Center" Grid.Row="3" Margin="0,0,0,0">
             <TextBlock Text="User's Password Request:" Style="{StaticResource SubHeaderStyle}" x:Name="PasswordHeader"/>
             <TextBlock Text="Some error will be displayed here" Style="{StaticResource ErrorTextStyle}" x:Name="PasswordError"/>
             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="Password"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Center" Grid.Row="4" Margin="0,0,0,20">
-            <Button Content="Submit" Height="50" Width="150" Style="{StaticResource SubmitButtonStyle}" x:Name="SubmitFolderButton" Click="OnSubmitClick"/>
+        <StackPanel VerticalAlignment="Center" Grid.Row="4" Margin="0,0,0,0">
+            <TextBlock Text="Admin Password:" Style="{StaticResource SubHeaderStyle}" x:Name="AdminPasswordHeader"/>
+            <TextBlock Text="Incorrect password or file name exists already." Style="{StaticResource ErrorTextStyle}" x:Name="AdminPasswordError"/>
+            <TextBox Style="{StaticResource TextBoxStyle}" x:Name="AdminPassword"/>
+        </StackPanel>
+
+        <StackPanel VerticalAlignment="Center" Grid.Row="5" Margin="0,0,0,10">
+            <Button Content="Submit" Height="40" Width="150" Style="{StaticResource SubmitButtonStyle}" x:Name="SubmitFolderButton"/>
         </StackPanel>
 
 

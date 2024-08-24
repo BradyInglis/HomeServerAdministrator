@@ -66,16 +66,6 @@ namespace HomeServerAdministrator
 
         }
 
-
-        public static bool IsAdminPasswordValid(string password)
-        {
-            if (password == "TemporaryPassword")
-            {
-                return true;
-            }
-            return false;
-        }
-
         private static bool ContainsSpaces(string str)
         {
             foreach (char character in str)

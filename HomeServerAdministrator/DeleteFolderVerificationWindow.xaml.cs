@@ -4,41 +4,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Net.Http;
 
 namespace HomeServerAdministrator
 {
     // Interaction logic for DeledteFolderVerificationWindow
     public partial class DeleteFolderVerificationWindow : Window
     {
-        public DeleteFolderVerificationWindow()
+        public DeleteFolderVerificationWindow(string folderToDelete)
         {
+            FolderToDelete = folderToDelete;
             InitializeComponent();
         }
 
-
         // Properties
-        public bool IsSubmissionSuccessful
+        public string FolderToDelete
         {
-            get; set;
+            get;
+            set;
         }
 
 
         // Make sure password was correct
-        private void OnDeleteButtonClick(object sender, RoutedEventArgs args)
+        public async Task<bool> DeleteClicked(object sender, RoutedEventArgs args)
         {
-            if (!EntryValidation.IsAdminPasswordValid(Password.Text))
-            {
-                ErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-            IsSubmissionSuccessful = true;
+            // Attempt to delete the folder. Read message as string.
+            HttpResponseMessage deletionResponse = await Folder.DeleteFolderByName(FolderToDelete, Password.Text);
+            string serializedDeletionResponse = await deletionResponse.Content.ReadAsStringAsync();
+            
+            // Display success message and close if success
+            if (deletionResponse.IsSuccessStatusCode) { MessageBox.Show(serializedDeletionResponse); return true; }
+
+            // Otherwise show error, return false
+            ErrorText.Visibility = Visibility.Visible;
+            return false;
         }
     }
 }

@@ -18,7 +18,6 @@ namespace HomeServerAdministrator
             PropertyNameCaseInsensitive = true,
         };
 
-
         // Http client instantiated only once
         private static readonly HttpClient Client = new HttpClient();
 
@@ -29,26 +28,17 @@ namespace HomeServerAdministrator
             List<Folder> folders = new List<Folder>();
 
             // Try and Get the folders json, deserialize back Folder
-            try
-            {
-                HttpResponseMessage httpMessage = await Client.GetAsync($"{URL}/GetFolders");
-                string jsonContent = await httpMessage.Content.ReadAsStringAsync();
-                var deserializedFolders = JsonSerializer.Deserialize<List<Folder>>(jsonContent, Options);
-                if (deserializedFolders != null) { folders = deserializedFolders; }
-            }
-            
-            // If there was an error, inform the user via error message box
-            catch (HttpRequestException e)
-            { 
-                MessageBox.Show($"There was an error on the server. Folders could not be found\n{e.Message}");
-;           }
+            HttpResponseMessage httpMessage = await Client.GetAsync($"{URL}/GetFolders");
+            string jsonContent = await httpMessage.Content.ReadAsStringAsync();
+            var deserializedFolders = JsonSerializer.Deserialize<List<Folder>>(jsonContent, Options);
+            if (deserializedFolders != null) { folders = deserializedFolders; }
 
             // Return list of folders
             return folders;
         }
 
         // Sends post request to create new folder
-        public static async void SaveFolder(string name, string email, string password)
+        public static async Task<HttpResponseMessage> SaveFolder(string name, string email, string password, string adminPassword)
         {
             // For storing requested user data
             var user = new
@@ -56,43 +46,20 @@ namespace HomeServerAdministrator
                 Name = name,
                 Email = email,
                 Password = password,
+                AdminPassword = adminPassword
             };
 
             // Try and send user data as json. Inform them of the status of their request
-            try
-            {
-                HttpResponseMessage httpMessage = await Client.PostAsJsonAsync($"{URL}/AddFolder", user);
-                string jsonContent = await httpMessage.Content.ReadAsStringAsync();  
-                MessageBox.Show($"{jsonContent}");
-            }
-
-            // If there was an error, inform the user
-            catch (HttpRequestException e)
-            {
-                MessageBox.Show($"Could not save folder to server. When you exit, the folder will be gone.\n{e.Message}");
-            }
+            HttpResponseMessage httpMessage = await Client.PostAsJsonAsync($"{URL}/AddFolder", user);
+            return httpMessage;
         }
 
         // Sends post request to delete folder
-        public static async void DeleteFolder(Folder folder)
+        public static async Task<HttpResponseMessage> DeleteFolder(string name, string adminPassword)
         {
-            // Try and send the request
-            try
-            {
-                HttpResponseMessage httpMessage = await Client.PostAsJsonAsync($"{URL}/DeleteFolder", folder);
-                string jsonContent = await httpMessage.Content.ReadAsStringAsync();
-                MessageBox.Show($"{jsonContent}");
-            }
-
-            // If there was an error, inform the user
-            catch (HttpRequestException e)
-            {
-                MessageBox.Show($"Could not delete folder to server. Changes will not be saved.\n{e.Message}");
-            }
+            // Try and send the request. Return respoonse to UI for user.
+            HttpResponseMessage httpMessage = await Client.PostAsJsonAsync($"{URL}/DeleteFolder", new { Name = name, Password = adminPassword });
+            return httpMessage;
         } 
-
-
-
-
     }
 }

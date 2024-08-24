@@ -152,13 +152,13 @@ namespace HomeServerAdministrator
             // Delete button click creates instance of delete folder window and subscribes to event handler
             deleteButton.Click += (sender, e) =>
             {
-                DeleteFolderVerificationWindow deleteFolderWindow = new DeleteFolderVerificationWindow();
-                deleteFolderWindow.DeleteButton.Click += (sender, e) =>
+                DeleteFolderVerificationWindow deleteFolderWindow = new DeleteFolderVerificationWindow(currentFolderContainer.Name);
+                deleteFolderWindow.DeleteButton.Click += async (sender, e) =>
                 {
-                    if (deleteFolderWindow.IsSubmissionSuccessful)
+                    bool submissionSuccessful = await deleteFolderWindow.DeleteClicked(sender, e);
+                    if (submissionSuccessful)
                     {
                         deleteFolderWindow.Close();
-                        Folder.DeleteFolderByName(currentFolderContainer.Name);
                         FoldersArea.Children.Remove(currentFolderContainer);
                     }
                 };
@@ -172,7 +172,12 @@ namespace HomeServerAdministrator
         {
             // Create a new CreateFolderForm window, subscribe to submit button press
             CreateFolderForm newFolderForm = new CreateFolderForm();
-            newFolderForm.SubmitFolderButton.Click += RefreshFolders;
+            newFolderForm.SubmitFolderButton.Click += async (sender, e) =>
+            {
+                bool submissionSuccessful = await newFolderForm.OnSubmitClick(sender, e);
+                if (submissionSuccessful) { newFolderForm.Close(); RefreshFolders(); }
+            };
+
             newFolderForm.ShowDialog();
         }
 
@@ -192,7 +197,6 @@ namespace HomeServerAdministrator
             CurrentPage = PageState.Requests;
         }
 
-
         // Clears folders area list completely and refills it
         public void RefreshFolders()
         {
@@ -201,10 +205,6 @@ namespace HomeServerAdministrator
 
             // Add new list of folders
             DisplayFolders();
-        }
-        private void RefreshFolders(object sender, RoutedEventArgs args)
-        {
-            RefreshFolders();
         }
     }
 }

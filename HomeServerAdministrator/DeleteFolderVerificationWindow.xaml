@@ -35,12 +35,12 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Vertical" Margin="5">
             <TextBlock Text="To proceed with deletion of this folder, please enter" Style="{StaticResource CustomHeaderStyle}"/>
-            <TextBlock Text="admin password below." Style="{StaticResource CustomHeaderStyle}"/>
+            <TextBlock Text="folder password below." Style="{StaticResource CustomHeaderStyle}"/>
         </StackPanel>
         <StackPanel Grid.Row="1">
             <TextBlock Text="Password Incorrect" Style="{StaticResource ErrorTextStyle}" x:Name="ErrorText"/>
             <TextBox Style="{StaticResource TextBoxStyle}" VerticalAlignment="Center" x:Name="Password"/>
         </StackPanel>
-        <Button Grid.Row="2" Content="Delete" Style="{StaticResource DeleteButtonStyle}" VerticalAlignment="Center" Click="OnDeleteButtonClick" x:Name="DeleteButton"/>
+        <Button Grid.Row="2" Content="Delete" Style="{StaticResource DeleteButtonStyle}" VerticalAlignment="Center" x:Name="DeleteButton"/>
     </Grid>
 </Window>

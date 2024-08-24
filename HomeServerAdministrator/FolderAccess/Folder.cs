@@ -5,6 +5,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Net.Http;
 
 namespace HomeServerAdministrator
 {
@@ -88,28 +89,34 @@ namespace HomeServerAdministrator
         }
 
         // Search through static list of Folder and delete the matching Folder if it exists
-        public static void DeleteFolderByName(string name)
+        public static async Task<HttpResponseMessage> DeleteFolderByName(string name, string adminPassword)
         {
-            // Search for a matching folder
+            // Delete from memory if it exists
             Folder folderToDelete = FindFolderByName(name);
+            if (folderToDelete != null) { Folders.Remove(folderToDelete); }
 
-            // If the folder exists, delete it from memory and server
-            if (folderToDelete != null)
-            {
-                Folders.Remove(folderToDelete);
-                Server.DeleteFolder(folderToDelete);
-            }
+            // Attempt to delete folder from server and grab response to determine if success
+            HttpResponseMessage deletionResponse = await Server.DeleteFolder(name, adminPassword);
+
+            // Return response to UI
+            return deletionResponse;
         }
         
         // Send folder to server and keep it in memory. Password/email need not be saved to memory. (Only newly made folders will ever need to be saved to server)
-        public static void CreateNewFolder(string name, string email, string password)
+        public static async Task<HttpResponseMessage> CreateNewFolder(string name, string email, string password, string adminPassword)
         {
-            // Store in memory
-            string currentDate = DateTime.Now.Date.ToString().Split(" ")[0];
-            Folders.Add(new Folder(name, currentDate, DefaultSize));
+            // Attempt to send to server for permanent storage
+            HttpResponseMessage folderAddResponse = await Server.SaveFolder(name, email, password, adminPassword);
 
-            // Send to server for permanent storage
-            Server.SaveFolder(name, email, password);
+            // Store in memory if server save was success
+            if (folderAddResponse.IsSuccessStatusCode)
+            {
+                string currentDate = DateTime.Now.Date.ToString().Split(" ")[0];
+                Folders.Add(new Folder(name, currentDate, DefaultSize));
+            }
+
+            // Return response
+            return folderAddResponse;
         }
     }
 }
